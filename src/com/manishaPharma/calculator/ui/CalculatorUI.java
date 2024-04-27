@@ -237,23 +237,23 @@ public class CalculatorUI {
     public void calculate(){
 
         if(txtField_MRP.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_MRP.getText() + PxConstants.ERROR_EMPTY_STRING);
+            JOptionPane.showMessageDialog(appPanel, label_MRP.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
             return;
         }
         if(txtField_GST.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_GST.getText() + PxConstants.ERROR_EMPTY_STRING);
+            JOptionPane.showMessageDialog(appPanel, label_GST.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
             return;
         }
         if(txtField_RetailMargin.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_RetailMargin.getText() + PxConstants.ERROR_EMPTY_STRING);
+            JOptionPane.showMessageDialog(appPanel, label_RetailMargin.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
             return;
         }
         if(txtField_StockistMargin.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_StockistMargin.getText() + PxConstants.ERROR_EMPTY_STRING);
+            JOptionPane.showMessageDialog(appPanel, label_StockistMargin.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
             return;
         }
         if(txtField_Scheme.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_Scheme.getText() + PxConstants.ERROR_EMPTY_STRING);
+            JOptionPane.showMessageDialog(appPanel, label_Scheme.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
             return;
         }
 
@@ -264,9 +264,9 @@ public class CalculatorUI {
         Double scheme = Double.parseDouble(txtField_Scheme.getText());
 
         //PTR Logic
-        double retailValuePercentage = retailMargin/MRP;
-        double retailValue =  retailValuePercentage*100;
-        double netMargin = MRP-retailValue;
+        double retailValuePercentage = (retailMargin/100) * MRP;
+        //double retailValue =  retailValuePercentage*100;
+        double netMargin = MRP-retailValuePercentage;
 
         double GSTFactor = (100+GST)/100;
 
