@@ -39,4 +39,5 @@ public class PxConstants {
     public static final String EMPTY_STRING = "";
 
     public static final String ERROR_EMPTY_STRING = " cannot be Empty!";
+
 }
