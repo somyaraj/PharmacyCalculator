@@ -9,6 +9,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.regex.Pattern;
 
 public class CalculatorUI {
 
@@ -302,30 +303,22 @@ public class CalculatorUI {
 }
 
 class NumberDocumentFilter extends DocumentFilter {
+    private final Pattern numberPattern = Pattern.compile("\\d*\\.?\\d*");
 
     @Override
     public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-        if (string == null) return;
-
-        // Check if the input is numeric
-        if (isNumeric(string)) {
+        String newStr = fb.getDocument().getText(0, fb.getDocument().getLength()) + string;
+        if (numberPattern.matcher(newStr).matches()) {
             super.insertString(fb, offset, string, attr);
         }
     }
 
     @Override
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-        if (text == null) return;
-
-        // Check if the input is numeric
-        if (isNumeric(text)) {
+        String newStr = fb.getDocument().getText(0, fb.getDocument().getLength()) + text;
+        if (numberPattern.matcher(newStr).matches()) {
             super.replace(fb, offset, length, text, attrs);
         }
-    }
-
-    // Method to check if a string is numeric
-    private boolean isNumeric(String str) {
-        return str.matches("\\d*"); // Regular expression to match digits
     }
 }
 
