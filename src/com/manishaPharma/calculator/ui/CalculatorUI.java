@@ -12,14 +12,21 @@ import java.awt.event.*;
 
 public class CalculatorUI {
 
-    private String title ;
-    private JFrame appFrame = null;
+    private final String title ;
     private JPanel appPanel = null;
-    private JLabel label_Header, label_MRP, label_GST, label_RetailMargin, label_StockistMargin, label_PTR, label_PTS,
-            label_Scheme, label_NetScheme;
-    private JTextField txtField_MRP, txtField_GST, txtField_RetailMargin, txtField_StockistMargin, txtField_PTR,
-            txtField_PTS, txtField_Scheme, txtField_NetScheme;
-    private JButton enterButton, clearButton;
+    private JLabel label_MRP;
+    private JLabel label_GST;
+    private JLabel label_RetailMargin;
+    private JLabel label_StockistMargin;
+    private JLabel label_Scheme;
+    private JTextField txtField_MRP;
+    private JTextField txtField_GST;
+    private JTextField txtField_RetailMargin;
+    private final JTextField txtField_StockistMargin = new JTextField(PxConstants.TEXT_FIELD_SIZE);
+    private JTextField txtField_PTR;
+    private JTextField txtField_PTS;
+    private JTextField txtField_Scheme;
+    private JTextField txtField_NetScheme;
 
     public CalculatorUI(String title) {
         super();
@@ -29,14 +36,14 @@ public class CalculatorUI {
 
     void init() {
 
-        appFrame = new JFrame(title);
+        JFrame appFrame = new JFrame(title);
         appFrame.setSize(PxConstants.FRAME_WIDTH, PxConstants.FRAME_HEIGHT);
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         appPanel = new JPanel();
         appPanel.setLayout(new BorderLayout());
 
-        label_Header = new JLabel(PxConstants.PTR_PTS_TITLE);
+        JLabel label_Header = new JLabel(PxConstants.PTR_PTS_TITLE);
         label_Header.setFont(new Font(PxConstants.FONT_NAME, Font.BOLD, PxConstants.LABEL_HEADER_SIZE));
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -59,16 +66,15 @@ public class CalculatorUI {
 
         //Stock Margin
         label_StockistMargin =  new JLabel(PxConstants.STOCKIST_MARGIN);
-        txtField_StockistMargin = new JTextField(PxConstants.TEXT_FIELD_SIZE);
         ((AbstractDocument) txtField_StockistMargin.getDocument()).setDocumentFilter(new NumberDocumentFilter());
 
         //PTR
-        label_PTR = new JLabel(PxConstants.PTR);
+        JLabel label_PTR = new JLabel(PxConstants.PTR);
         txtField_PTR = new JTextField(PxConstants.TEXT_FIELD_SIZE);
         txtField_PTR.setEditable(false);
 
         //PTS
-        label_PTS = new JLabel(PxConstants.PTS);
+        JLabel label_PTS = new JLabel(PxConstants.PTS);
         txtField_PTS =  new JTextField(PxConstants.TEXT_FIELD_SIZE);
         txtField_PTS.setEditable(false);
 
@@ -78,14 +84,14 @@ public class CalculatorUI {
         ((AbstractDocument) txtField_Scheme.getDocument()).setDocumentFilter(new NumberDocumentFilter());
 
         //Net Scheme
-        label_NetScheme = new JLabel(PxConstants.NET_SCHEME);
+        JLabel label_NetScheme = new JLabel(PxConstants.NET_SCHEME);
         txtField_NetScheme =  new JTextField(PxConstants.TEXT_FIELD_SIZE);
         txtField_NetScheme.setEditable(false);
 
         // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        enterButton = new JButton(PxConstants.ENTER_BUTTON_LABEL);
-        clearButton = new JButton(PxConstants.CLEAR_BUTTON_LABEL);
+        JButton enterButton = new JButton(PxConstants.ENTER_BUTTON_LABEL);
+        JButton clearButton = new JButton(PxConstants.CLEAR_BUTTON_LABEL);
         buttonPanel.add(enterButton);
         buttonPanel.add(clearButton);
 
@@ -141,25 +147,18 @@ public class CalculatorUI {
         appFrame.setVisible(true);
 
         //Logic for ActionListener and Buttons
-        txtField_MRP.addKeyListener(new ArrowKeyListener(txtField_MRP, txtField_GST, txtField_Scheme));
-        txtField_GST.addKeyListener(new ArrowKeyListener(txtField_GST, txtField_RetailMargin, txtField_MRP));
-        txtField_RetailMargin.addKeyListener(new ArrowKeyListener(txtField_RetailMargin, txtField_StockistMargin, txtField_GST));
-        txtField_StockistMargin.addKeyListener(new ArrowKeyListener(txtField_StockistMargin, txtField_Scheme, txtField_RetailMargin));
-        txtField_Scheme.addKeyListener(new ArrowKeyListener(txtField_Scheme, txtField_MRP, txtField_StockistMargin));
+        txtField_MRP.addKeyListener(new ArrowKeyListener(txtField_GST, txtField_Scheme));
+        txtField_GST.addKeyListener(new ArrowKeyListener(txtField_RetailMargin, txtField_MRP));
+        txtField_RetailMargin.addKeyListener(new ArrowKeyListener(txtField_StockistMargin, txtField_GST));
+        txtField_StockistMargin.addKeyListener(new ArrowKeyListener(txtField_Scheme, txtField_RetailMargin));
+        txtField_Scheme.addKeyListener(new ArrowKeyListener(txtField_MRP, txtField_StockistMargin));
 
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setClearButton();
-            }
+        clearButton.addActionListener(e -> {
+            setClearButton();
+            txtField_MRP.requestFocus();
         });
 
-        enterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculate();
-            }
-        });
+        enterButton.addActionListener(e -> calculate());
 
         Action action = new AbstractAction() {
             @Override
@@ -237,31 +236,36 @@ public class CalculatorUI {
     public void calculate(){
 
         if(txtField_MRP.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_MRP.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
+            JOptionPane.showMessageDialog(appPanel, label_MRP.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, JOptionPane.INFORMATION_MESSAGE);
+            txtField_MRP.requestFocus();
             return;
         }
         if(txtField_GST.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_GST.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
+            JOptionPane.showMessageDialog(appPanel, label_GST.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, JOptionPane.INFORMATION_MESSAGE);
+            txtField_GST.requestFocus();
             return;
         }
         if(txtField_RetailMargin.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_RetailMargin.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
+            JOptionPane.showMessageDialog(appPanel, label_RetailMargin.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, JOptionPane.INFORMATION_MESSAGE);
+            txtField_RetailMargin.requestFocus();
             return;
         }
         if(txtField_StockistMargin.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_StockistMargin.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
+            JOptionPane.showMessageDialog(appPanel, label_StockistMargin.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, JOptionPane.INFORMATION_MESSAGE);
+            txtField_StockistMargin.requestFocus();
             return;
         }
         if(txtField_Scheme.getText().isEmpty()){
-            JOptionPane.showMessageDialog(appPanel, label_Scheme.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, PxConstants.OPTION_INDEX);
+            JOptionPane.showMessageDialog(appPanel, label_Scheme.getText() + PxConstants.ERROR_EMPTY_STRING, PxConstants.TITLE, JOptionPane.INFORMATION_MESSAGE);
+            txtField_Scheme.requestFocus();
             return;
         }
 
-        Double MRP = Double.parseDouble(txtField_MRP.getText());
-        Double GST = Double.parseDouble(txtField_GST.getText());
-        Double retailMargin = Double.parseDouble(txtField_RetailMargin.getText());
-        Double stockistMargin = Double.parseDouble(txtField_StockistMargin.getText());
-        Double scheme = Double.parseDouble(txtField_Scheme.getText());
+        double MRP = Double.parseDouble(txtField_MRP.getText());
+        double GST = Double.parseDouble(txtField_GST.getText());
+        double retailMargin = Double.parseDouble(txtField_RetailMargin.getText());
+        double stockistMargin = Double.parseDouble(txtField_StockistMargin.getText());
+        double scheme = Double.parseDouble(txtField_Scheme.getText());
 
         //PTR Logic
         double retailValuePercentage = (retailMargin/100) * MRP;
@@ -326,12 +330,10 @@ class NumberDocumentFilter extends DocumentFilter {
 }
 
 class ArrowKeyListener extends KeyAdapter {
-    private JTextField currentTextField;
-    private JTextField nextTextField;
-    private JTextField prevTextField;
+    private final JTextField nextTextField;
+    private final JTextField prevTextField;
 
-    public ArrowKeyListener(JTextField currentTextField, JTextField nextTextField, JTextField prevTextField) {
-        this.currentTextField = currentTextField;
+    public ArrowKeyListener(JTextField nextTextField, JTextField prevTextField) {
         this.nextTextField = nextTextField;
         this.prevTextField = prevTextField;
     }
